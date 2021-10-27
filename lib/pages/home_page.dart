@@ -10,7 +10,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   getUserInfo() async {
     String userName = await AuthHelper.getUserNameSharedPreference();
     String userEmail = await AuthHelper.getUserEmailSharedPreference();
@@ -19,8 +19,24 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    WidgetsBinding.instance!.addObserver(this);
     getUserInfo();
     super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused) {
+      debugPrint(" AppLifecycleState = Durdu (Home Page)");
+    }
+    if (state == AppLifecycleState.resumed) {
+      getUserInfo();
+      debugPrint(" AppLifecycleState = Devam Ediyor (Home Page)");
+    }
+    if (state == AppLifecycleState.inactive) {
+      debugPrint(" AppLifecycleState = İnaktif (Home Page)");
+    }
   }
 
   @override
